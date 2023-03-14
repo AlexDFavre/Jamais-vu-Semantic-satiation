@@ -1,0 +1,968 @@
+---
+title             : "Using semantic satiation to induce jamais vu experiences"
+shorttitle        : "Jamais vu & semantic satiation"
+
+author: 
+  - name          : "Alexis Favre"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Laboratoire de Psychologie & NeuroCognition (LPNC UMR 5105), Université Grenoble Alpes, Bâtiment Michel Dubois prev. BSHM, 1251 Avenue Centrale, 38400 Saint-Martin-d'Hères"
+    email         : "alexis.favrefelix@gmail.com"
+  - name          : "Chris J. A. Moulin"
+    affiliation   : "1"
+affiliation:
+  - id            : "1"
+    institution   : "Laboratoire de Psychologie & NeuroCognition (LPNC UMR 5105), Université Grenoble Alpes, Grenoble, France"
+authornote: |
+abstract: |
+    In two experiments, the jamais vu phenomenon was investigated using a word alienation procedure. In the first experiment, 72 participants repeated a word 3 or 30 times before realizing a semantic relatedness decision task. The results did not support the hypothesis that only semantically related words should be impacted by repetitions (indicator of a semantic satiation effect), but rather showed a general slowing down effect due to word satiation. In the second experiment, we seeked to replicate our findings blablabla
+    The discussion focuses on the relationship between jamais vu and semantic satiation, as well as on the metacognitive aspect of such a sensation by considering it as an alert indicating the presence of an underlying cognitive disturbance.
+  
+keywords          : "jamais vu, semantic satiation, metacognition"
+wordcount         : "X"
+bibliography      : ["References.bib"]
+floatsintext      : no
+figsintext        : no
+figurelist        : yes
+tablelist         : yes
+footnotelist      : no
+linenumbers       : no
+mask              : no
+draft             : yes
+colorlinks        : yes
+csl               : "apa.csl"
+documentclass     : "apa7"
+classoption       : "jou"
+output            : papaja::apa6_pdf
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+```{r setup, include = FALSE}
+library("papaja")
+library(tidyverse)
+library(tinytex)
+library(dplyr)
+library(readxl)
+library(ggplot2)
+library(lme4)
+library(lmerTest)
+library(stats)
+library(languageR)
+library(papaja)
+library(BayesFactor)
+library(bookdown)
+library(knitr)
+library(MOTE) # for the 'apa()' function in the text
+library(citr)
+library(cowplot)
+library(performance) # for assumptions --> check_model()
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+# Introduction
+
+"Two of the most famous illusions of memory --- déjà vu and jamais vu --- are illusions of metacognition. ... However, the concept of jamais vu has been given very little attention [so far]" [@Roediger1996, p. 95].
+
+Jamais vu is a little known phenomenon described as finding subjectively something unfamiliar while knowing it to be familiar [@Moulin2020].
+This feeling of strange novelty could arise in various situations such as the practice of music or the processing of faces and places.
+Perhaps the most common example concerns words, in writing, spelling, or reading: by writing a well known word, one might find that word suddenly strange, seeing only a series of lines with as much meaning as hieroglyphics.
+At the turn of the last century, @Burnham1903 reported the case of one of his patients who, as a result of a work overload, showed marked mnemonic impairments:
+
+> You have often experienced the sensation of oldness instead of newness when in a strange place--- that is, the feeling that you had seen the same before.
+> Did you ever have the converse of that feeling?
+> It happened to me several times of late.
+> Objects the most familiar all at once seemed wholly strange and altogether unrecognizable as never having been seen before.
+> [@Burnham1903, p. 383].
+
+Jamais vu is often operationalised as the opposite of déjà vu [@Brown2003], and both are symptoms of migraine and temporal lobe epilepsy [@Sengoku1997].
+Compared to déjà vu, jamais vu is less frequent in healthy population [@Findler1998; @Sno2000], but more frequent in neuropsychiatric conditions [@Burwell2017].
+In the same way that studying déjà vu has allowed to learn more about how episodic memory works, studying jamais vu could help us to better understand some pathologies such as schizophrenia or the syndrome of Capgras, and could provide additional evidence of metacognitive experiences.
+However, jamais vu has so far been little studied, continually quoted alongside déjà vu or discussed from a philosophical point of view, and no definition has yet reached consensus in the scientific community.
+
+Despite the lack of studies on jamais vu, two related phenomena are well described in the literature: word alienation and semantic satiation [@Brown2003].
+In an early study, @Severance1907 noted the loss of meaning that results from the prolonged visual fixation of a word.
+They have noticed that as the word becomes fixed, its meaning seems to fade from a simple confusion of letters to a series of meaningless symbols.
+Similar sensations have also been induced in word repetition tasks [@Bassett1919], but following criticisms by @Esposito1971, researchers have tended to use more objective measurements, leading them to reveal cognitive disturbances through response times [@Smith1984; @Balota1997].
+In these experiments, participants had to repeat a word for a short or long time before performing a semantic relatedness decision task.
+Results suggested slower response times following a large number of repetitions for semantically related words only.
+Based on the model of [@Collins1975], the authors then interpreted that the repetition of a word disrupt the spreading activation of a concept within the semantic network.
+
+In a recent study, @Moulin2020 used the word alienation task in order to induce jamais vu-like experiences experimentally.
+As the terminology remains unclear between different authors, the idea was that the term semantic satiation could refer to the cognitive process leading to both cognitive impairments --- measured by slower response times --- and to the arising of a subjective feeling, that could be considered as jamais vu.
+Moreover, whether linguistic material is used, the term word alienation could be a useful term to describe the procedure leading to that feeling.
+They used a word-writing protocol in which participants had to write a word until they felt peculiar sensations.
+Results suggested that 70.9% of participants reported at least one feeling they classified as jamais vu, and they found a positive correlation between the rate of experimental jamais vu and the percentage of jamais vu experienced in daily life, suggesting that feelings induced in laboratory conditions may be closely linked to the real jamais vu, which is a critical consideration for research into such unusual experiences.
+As @Roediger1996 suggested, the subjective feelings --- here considered as an experimental jamais vu --- could be some kind of alarm from the metacognitive spheres, maybe generated by an underlying cognitive impairment.
+
+In the semantic satiation literature, one could distinguished on the one hand early studies that revealed feelings of loss of meaning, and on the other hand, more recent studies that revealed cognitive impairments.
+However, to our knowledge, no study had so far attempted to reconcile these two sides.
+It was guided by this idea that we previously tested the relatedness between semantic satiation and jamais vu, i.e., the cognitive process and the feeling (see [Appendix A](#appendix-a)).
+Our hypothesis was straightforward: If these two aspects are linked, we should then observe a correlation between reports of strange feelings and cognitive impairments.
+In order to test this, we used the same procedure as @Balota1997 in which we added reports of subjective reports of peculiar feelings.
+In this experiment, participants had to repeat a word 3 or 30 times and then realize a semantic relatedness decision task about a semantically related or unrelated word.
+Results highlighted two interesting points: Firstly, as expected, trials that generated feelings that we have considered to be jamais vu led to an increase in response times, and we found the same rate of jamais vu reports than @Moulin2020 experiment's.
+But surprisingly, we failed to replicate the semantic satiation effect --- indexed by the increase of response times following 30 repetitions for only related targets.
+Indeed, response times increased in the same way as a function of the number of repetitions, independently of the semantic relatedness.
+We have replicated this effect in a second study, and suggested that the effect measured by this kind of task might not be a purely semantic satiation effect.
+Instead of that, repetitions or prolonged fixations of a word could give rise to a general satiation effect slowing down any processing.
+
+Notwithstanding semantic satiation being purely semantic, reports of peculiar feelings are at least correlated with slower response times.
+Our interpretation was that these feelings indexed as jamais vu could be of particular interest by alerting us through a metacognitive experience of the presence of an underlying impairment in the cognitive processing, and as in déjà vu and ToT, one would expect that the ACC would also be recruited during a jamais vu occurence.
+In order to improve our comprehension of such a phenomenon, as researchers have done with the two feelings mentioned above, it would be useful to study the prevalence of jamais vu in an older population.
+
+The aim of the current study was straightforward, seeking to extend our previous results by testing jamais vu occurrences in an older population.
+Knowing whether jamais vu increases or decreases with age is an important issue, because it may shed some light on the mechanisms of jamais vu arising, and enrich a part of the literature still little referenced, namely, metacognitive experiences in healthy aging.
+Because the particular current situation has not allowed to experiment with older adults, the following results will come from two experiments.
+As first experiment, we will present results from a study conducted in October 2019.
+This experiment was a replication of the one we conducted last year except for two differences: Firstly, instead of semantically related words belonging to the same category, each pair was composed of one name of category (e.g., COULEUR) as prime, and one target either from that category (member condition), either from another (non-member condition).
+According to the spreading activation model [@Collins1975], activation - and thus satiation - need not go through the category name high-level, but simply can propagate between related nodes.
+However, we still applied this change to replicate @Smith1984's exact design and verify whether the semantic satiation effect would not reveal itself under these conditions.
+Secondly, when participants felt strange feelings, they no longer had to report it verbally but instead press the SPACE key on the keyboard.
+The hypotheses were the same as in our previous study, i.e. that only access to semantically related targets would be affected by repetition (indicative of a semantic satiation effect), and that trials for which a jamais vu occurred would result in stronger cognitive impairments.
+As second experiment, we will present the results obtained on the control group (i.e., young adults).
+Finally, we will discuss the results of the first experiment and then speculate about results and implications of the present study as it was to have been carried out.
+Access to OSF pre-registration of the study as originally planned is available here: [<https://osf.io/7g2en>].
+
+# Experiment 1
+
+## Method
+
+### Participants
+
+```{r include = FALSE}
+
+df_infos <- read_excel("Infos_jamais_vu.xlsx")
+
+## calculate mean and sd age
+M_age_XP1 = mean(df_infos$age)
+SD_age_XP1 = sd(df_infos$age)
+
+#`r M_age`
+#`r SD_age`
+#
+#`r apa(M_age, 2, T)`                               #The apa function takes three arguments:
+# `r apa(SD_age, 2, T)`                             #- a single number or a numeric vector
+#                                                   #- the number of decimal places you want
+#                                                   #- T include the zero (0.51) or F exclude the zero (.51)
+
+```
+
+A total of `r nrow(df_infos)` participants took place in the experiment (`r sum(df_infos$genre=='F')` women and `r sum(df_infos$genre=='H')` men).
+The mean age was *M* = `r apa(M_age_XP1, 2, T)` (*SD* = `r apa(SD_age_XP1, 2, T)`).
+They were all native French speakers, had normal or corrected to normal vision and were rewarded with course credits.
+Sample size was determined by calculating effect size from @Smith1984's study.
+The effect size obtained of *d* = .40 allowed us to recruit exactly 70 participants (using G-power with a power of .95 and an alpha error probability of.05).
+The final choice was made with 72 participants, so that the 4 conditions would contain the same number of participants, *i.e.*, 18 participants per condition.
+
+### Materials and procedure
+
+Stimuli used were 80 semantically related word pairs.
+They were selected following the completion of an online questionnaire by 38 participants.
+In this questionnaire, 40 category names (e.g., COLOUR) taken from the lists of @Battig1969 and @Smith1984 were presented to participants.
+For each, participants were asked to write the first three words that came to mind and that seemed to belong to the category.
+The two most frequent words in each category were selected to construct the semantically related word pairs.
+Two lists of 40 word pairs were constructed (see [Appendix X](#appendix-X)), each list containing 20 words associated with a member of the same category (e.g. BLEU --- ROUGE) and 20 others associated with a non-member (e.g. JOIE --- TIGRE).
+Each pair therefore contained a prime word and a target word.
+Because there were two repetition conditions and two levels of relatedness, eight lists were constructed in order to ensure complete counterbalancing.
+Participants did not see any word for more than one trial and the order of trials was randomised anew for each participant.
+A list of 8 pairs of words was built in a similar way for training.
+The experiment was built with the Opensesame software (version 3.2.8 Kafkaesque Koffka).
+Stimuli were presented in white capital letters on a black background at the center of the screen.
+In this experiment, there was a 2 (number of repetitions: 3 vs. 30) \* 2 (semantic relatedness: related vs. unrelated) within-factor design.
+
+Participants were individually tested in a 20-minute session.
+Each participant randomly completed 8 training and 40 experimental trials on only one of the eight constructed lists.
+A break was set after 20 trials.
+Odd participants had list 1 while even participants had list 2.
+Thus, each of them randomly saw only 20 semantically related targets and 20 unrelated targets.
+Within each of the 20 pairs, 10 prime words were presented 3 times while the other 10 were presented 30 times so that each participant saw only 10 words per condition.
+A trial was built as following: (1) a fixation dot was displayed in the center of the screen for 1 second; (2) a prime word was presented either 3 times or 30 times for 500 ms with a 100-ms interval, and the participant had to stare at the word and pronounce it each time it appeared; (3) a fixation dot of 1.5 second was presented; (4) the target word was displayed and the participant had to press the "P" key if the target was related to the prime and the "A" key if it was not (keyboard responses were counterbalanced from one subject to another); (5) a feedback on response time was displayed to encourage faster responses [@Pachella1973] and to avoid a flattening of response times due to the repetitive and hypnotizing nature of the task.\
+Before the experiment began, each participant was asked to report any peculiar sensation due to the repetition of words.
+If necessary, participants had to verbally indicate to the experimenter by a previously agreed word the appearance of a peculiar sensation during the repetition.
+The experimenter's instructions on this detail was the same for all subjects, as vague as possible about the type of potential sensation to avoid demand bias, and justified as a possible phenomenon in an experiment using the priming technique.
+At this point of the experiment, none of the participants has heard the term "jamais vu" before.\
+At the end of the test, each participant had to fill out a [questionnaire](https://osf.io/z9ty7/) inviting them to describe the sensations potentially felt and make the link with sensations of jamais-vu or déjà-vu in daily life
+. If participants said they had felt a peculiar sensation, they were asked to describe it openly first, and then to choose from among the following five options those that best describe the sensation felt: 1) the word did not appear real, 2) the spelling looked incorrect, 3) it was as if I was seeing the word for the first time, 4) the word seemed to have lost its meaning, and 5) another
+. Checking one or more of the first four options was, in addition to the analysis of the open response, considered to be the indicator of the presence of a jamais vu sensation
+. In the last part of the questionnaire, participants were asked to estimate the frequency of occurrence per month of each of the following phenomena: jamais-vu, déjà vu, and tip-of-the-tongue phenomenon
+.
+
+### Data analysis
+
+We used R (Version 3.6.1; "Action of the Toes") for all our analyses.
+We used mixed models analyses [@Judd2012; @Westfall2014] with the lme4 package (version 1.1-21) [@Bates2012].
+P-values were obtained by Satterthwhaite approximation with the lmerTest package (version 3.1-0) [@Kuznetsova2015].
+In this kind of analysis, and in contrast with traditional analyses of variance (e.g., ANOVA), multiple random factors are used (e.g., participants, stimuli) instead of one.
+Accordingly, mixed models allow to generalize the results not only over one but over every random term (i.e., over all participants and all stimuli at the same time) and thus maximize the generalizability of results compared to traditional analyses.
+Importantly for our purpose, this analysis also enables to test the variability of our effects (e.g., number of repetitions and semantic relatedness) for several random factors (e.g., participants and stimuli).
+As the residuals did not follow a normal distribution, we used the bestNormalize package (version 1.5.0) which estimates and applies the best possible transformation among several possibilities.
+In order to detect outliers, instead of the standard errors around the mean, we used the absolute deviation around the median (MAD), which is known to be a more robust measure of dispersion [@Leys2013].
+
+We also used a Bayesian analysis approach in addition to mixed models.
+[^1] In Bayesian model comparison, the null hypothesis is directly compared to the alternative hypothesis, and evidence for both the null effect and the the effect of interest can be simulatneously tested [@Dienes2014], while frequentist statistics only test the effect of interest by rejecting the null hypothesis.
+Statistical results are interpreted using the Bayesian Factor (BF), which reflects the likelihood ratio of a given model (e.g., effect of interest).
+The model with the highest BF value be favoured over others.
+We used the classification proposed by previous studies [@Jeffreys1998; @Wagenmakers2011]: A BF \< 1 provides no evidence, 1 \< BF \< 3 provides anecdotal evidence, 3 \< BF \< 10 provides moderate evidence, 10 \< BF \< 30 provides strong evidence, 30 \< BF \< 100 provides very strong evidence, and 100 \< BF provides extreme/decisive evidence.
+
+[^1]: This method has already been used in psycholinguistic [see @Kowialiewski2018].
+
+## Results and discussion
+
+```{r data loading, include = FALSE}
+
+# First experiment
+path <- "expexlsx/subject-" 
+
+for(subj in 1:72){
+  fullpath <- paste(path, toString(subj), ".xlsx", sep = "")
+  df_tmp <- read_excel(fullpath) %>% 
+    select(pp,
+           prime,
+           target,
+           number_presentation,
+           semantic_relation,
+           correct_response,
+           response,
+           correct,
+           response_time,
+           jamais_vu,
+           time_jv,
+           jv_pp,
+           number_jv)
+  
+  if(subj == 1) {
+    df <- df_tmp
+  }
+  df <- dplyr::union(df, df_tmp)
+}
+
+
+
+# Second experiment
+path <- "jv_replic_xlsx/subject-" 
+
+
+for(subj in 1:72){
+  fullpath <- paste(path, toString(subj), ".xlsx", sep = "")
+  dfr_tmp <- read_excel(fullpath) %>% 
+    select(pp,
+           prime,
+           target,
+           number_presentation,
+           semantic_relation,
+           correct_response,
+           response_keyboard_response,
+           response_time,
+           response_keyboard_response_JV,
+           jv_pp, 
+           experiment_file, 
+           hour,  
+           number_jv)
+  
+  if(subj == 1) {
+    dfr <- dfr_tmp
+  }
+  dfr <- dplyr::union(dfr, dfr_tmp)
+}
+
+```
+
+```{r restructure_SS, include = FALSE}
+
+df_SS <- df %>% 
+  transform(
+    semantic_relation = ifelse(semantic_relation == 1, "related", "unrelated"), 
+    number_presentation = ifelse(number_presentation == 3, "3", "30"), 
+    jamais_vu = ifelse(jamais_vu == 1, "presence", "absence")
+    ) %>% 
+  mutate(
+    logRT = log(response_time),
+    invRT = 1000 / response_time
+    ) %>% 
+  mutate(
+    Cnum_pres = -0.5*(number_presentation == 3) + 0.5*(number_presentation == 30), 
+    Csem_rel = -0.5*(semantic_relation == "related") + 0.5*(semantic_relation == "unrelated")
+    ) %>% 
+  filter(
+    correct == 1
+    ) %>% 
+  group_by(pp) %>% 
+  mutate(
+    med = median(response_time), 
+    mad = mad(response_time, center = median(response_time), constant = 1.4826, na.rm = FALSE,
+              low = FALSE, high = FALSE),
+    mad3 = med + (3*mad), 
+    madinv = med - (3*mad)
+  ) %>% 
+  filter(
+    response_time < mad3, 
+    response_time > madinv)
+
+
+df_average_SS <- df_SS %>% 
+  group_by(pp, number_presentation, semantic_relation) %>% 
+  summarise(response_time = mean(response_time))
+
+```
+
+```{r restructure_JV, include = FALSE}
+
+df_JV <- df_SS %>%  
+  filter(number_presentation == 30, 
+         jv_pp == 1) %>% 
+  select(pp, Csem_rel, jamais_vu, invRT, logRT, target, response_time, semantic_relation) %>% 
+  mutate(Cjv = ifelse(jamais_vu == "absence", -0.5, 0.5))
+
+df_average_JV <- df_JV %>% 
+  group_by(pp, jamais_vu, semantic_relation) %>% 
+  summarise(response_time = mean(response_time))
+
+```
+
+Results of this experiment can be split into two main parts: Firstly, we aimed to replicate @Smith1984's results by highlighting a semantic satiation effect --- indexed by an increase of response times following 30 rather than 3 repetitions only for semantically related targets (semantic satiation hypothesis).
+Secondly, as we hypothesized, if the subjective feeling of loss of meaning is linked to such cognitive impairments, then trials that generated jamais vu sensations should lead to an increase of that semantic satiation effect (jamais vu hypothesis).
+To analyze response times, we removed incorrect responses (i.e., 5.1% of all trials, or 147 observations), as well as RTs considered as outliers.
+The application of the MAD method allowed us to exclude all responses higher than 3 MAD above and below the median for each participant, which represent 6.55% of all good responses (i.e., 179 observations).
+Because of the distribution of residuals didn't follow a normal distribution, we applied an ordered quantile normalizing transformation on the dependant variable.
+
+#### Semantic satiation hypothesis
+
+```{r model SS, include = FALSE}
+
+# approach by model comparison
+#lmss_0 <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres*Csem_rel | pp) + (Cnum_pres*Csem_rel | target), data = df_SS)
+#lmss_00 <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres*Csem_rel || pp) + (Cnum_pres*Csem_rel || target), data = df_SS)
+#lmss_01 <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres + Csem_rel || pp) + (Cnum_pres*Csem_rel || target), data = df_SS)
+#lmss_02 <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres + Csem_rel || pp) + (Cnum_pres + Csem_rel || target), data = df_SS)
+anova(lmss_00, lmss_01)
+#lmss_1 <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres + Csem_rel | pp) + (Cnum_pres + Csem_rel || target), data = df_SS)
+#lmss_2 <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres + Csem_rel | pp) + (Cnum_pres + Csem_rel | target), data = df_SS)
+
+
+# final model
+lm_SS <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres + Csem_rel | pp) + (Cnum_pres + Csem_rel | target), data = df_SS)
+
+
+# check assumptions
+check_model(lm_SS)
+shapiro.test(residuals(lm_SS))
+
+
+# results
+summary(lm_SS)
+#Fixed effects:
+#                    Estimate Std. Error        df t value Pr(>|t|)    
+#(Intercept)        6.552e+00  2.964e-02 8.166e+01 221.103  < 2e-16 ***
+#Cnum_pres          9.720e-02  1.114e-02 6.897e+01   8.726 9.45e-13 ***
+#Csem_rel           4.348e-02  2.136e-02 5.296e+01   2.036   0.0468 *  
+#Cnum_pres:Csem_rel 1.072e-03  1.673e-02 2.239e+03   0.064   0.9489   
+
+#--------------------------------------------------------------------------------------------------
+
+# effect sizes (estimate / sqrt(sum all variances of random effects))
+# number repetitions
+ 0.09720 / sqrt(0.0570173 + 0.0035086 + 0.0059470 + 0.0027468 + 0.0002154 + 0.0121823 + 0.0429514)
+# .28
+
+# semantic relation
+0.04348 /  sqrt(0.0570173 + 0.0035086 + 0.0059470 + 0.0027468 + 0.0002154 + 0.0121823 + 0.0429514)
+# .12
+
+# interaction
+0.001072 / sqrt(0.0570173 + 0.0035086 + 0.0059470 + 0.0027468 + 0.0002154 + 0.0121823 + 0.0429514)
+# .003
+
+#--------------------------------------------------------------------------------------------------
+ 
+# Bayesian
+str(df_SS)
+df_SS$pp <- as.factor(df_SS$pp)
+df_SS$target <- as.factor(df_SS$target)
+df_SS$Cnum_pres <- as.factor(df_SS$Cnum_pres)
+df_SS$Csem_rel <- as.factor(df_SS$Csem_rel)
+
+BFsem <- anovaBF(logRT ~ Cnum_pres : Csem_rel + pp, whichRandom = "pp", data = df_SS, 
+                 iterations = 10000, whichModels = "top")
+BFsem   
+
+# because the output of the model is H0, we have to search the inverse of the parameter's result
+1/BFsem[3] # number of repetitions : 6.648146e+22 ±6.17%
+1/BFsem[2] # semantic relation :  105154 ±12.24%
+1/BFsem[1] # interaction : 0.06423626 ±5.06%
+
+
+```
+
+In order to test the semantic satiation hypothesis, we used a mixed model analysis with the interaction between the number of repetitions and the semantic relatedness as fixed effects.
+The application of the Bates method [@Bates2015] allowed us to estimate an intercept and a slope for both variables number of repetitions and semantic relatedness per participants, as well as per stimuli.
+Average response times and standard deviations are shown in Table 1 and Figure 1.
+The analysis revealed a main effect of the number of repetitions, (*t*(68.97) = 8.73, *p* \< .001, *d* = .28), indicating that response times are faster following three rather than 30 repetitions.
+The main effect of semantic relatedness was also significant (*t*(52.96) = 2.03, *p* \< .05, *d* = .12), revealing faster response times when the target is related to the prime rather than unrelated, i.e., a priming effect.
+However, contrary to our expectations, the interaction effect was not significant (*t*(2239) = 0.06, *p* > .05).
+
+Because of the absence of the expected interaction effect, and given that the frequentist approach is not adapted to interpret the absence of an effect, we performed as an exploratory analysis a Bayesian ANOVA. By running 10 000 iterations, results showed no evidence for the presence of the interaction effect (BF \< 1).
+
+
+This analysis can be summarized in two main points: Firstly, the repetition of a word seemed to put participants in a state of slower response times. However, the semantic priming effect was still present, showing that cognitive processes were spared.
+Secondly, contrary to our expectations, the effect of semantic satiation indexed by the interaction between the repetition and the semantic relatedness was absent to our analysis.
+According to @Smith1984, only access to semantically related targets should have been impacted by the repetition.
+In our case, response times of both related and unrelated targets were impacted in the same way.
+These results cast some doubt on the existence of such an effect, even thought it has been revealed in several experiments over the last century.
+However, by taking a look to the results of some of these experiments, we noticed that the effect of semantic satiation manifested itself in different ways according to experiments and interpretations: into the article of @Smith1984, the pattern of reaction times differs between the two experiments.
+In @Balota1997's experiment, the semantic satiation effect is interpreted by a decrease in the relatedness effect (the difference between response latency on related and unrelated trials) as a function of the repetition.
+Specifically, it is not access to related concepts that is disrupted in their experiment, but access to unrelated concepts that is facilitated.
+In either case, the semantic satiation effect does indeed imply a reduction or even a complete erasing of the semantic priming effect, but the variety of patterns seems to reveal the inconsistency of such an effect.
+
+```{r table 1, fig.cap="\\label{tab:table-1}table-1", echo = FALSE, results = 'asis'}
+
+df_3 <- df_average_SS %>% 
+  filter(number_presentation == "3") %>% 
+  spread(semantic_relation, response_time) %>% 
+  ungroup() %>% 
+  select("related", "unrelated")
+  
+df_30 <- df_average_SS %>% 
+  filter(number_presentation == "30") %>% 
+  spread(semantic_relation, response_time) %>% 
+  ungroup() %>% 
+  select("related", "unrelated")
+
+
+M3 <- t(apply(df_3, 2, function(x) {
+    round(c(Mean = mean(x, na.rm = TRUE), SD = sd(x, na.rm = TRUE), Min = min(x, na.rm = TRUE), Max = max(x, na.rm = TRUE)), 2)
+  }))
+
+M30 <- t(apply(df_30, 2, function(x) {
+    round(c(Mean = mean(x, na.rm = TRUE), SD = sd(x, na.rm = TRUE), Min = min(x, na.rm = TRUE), Max = max(x, na.rm = TRUE)), 2)
+  }))
+
+
+apa_table(cbind(M3, M30),
+          placement = "ht", 
+          align = c("l", rep("l", 8)),          
+          caption = "response times as a function of the number of repetitions and the semantic relatedness",
+          note = "All values are in milliseconds.",
+          added_stub_head = 'semantic relatedness', 
+          col_spanners = list(`3` = c(2, 5), `30` = c(6, 9)))
+
+```
+
+```{r figure-1, fig.cap="\\label{fig:figure-1}response times and standard errors as a function of the number of repetitions and the semantic relatedness", echo = FALSE, results = 'asis'}
+
+par(
+  list(
+    family = "serif", 
+    adj = 0.5, 
+    cex.main = 1, 
+    cex.axis = 1, 
+    cex.lab = 1
+  ), 
+  no.readonly = FALSE
+)
+
+apa_lineplot(
+  df_SS, 
+  id = "pp", 
+  dv = "response_time", 
+  factors = c("number_presentation", 'semantic_relation'), 
+  dispersion = se, 
+  jit = 0.1, 
+  args_legend = list(x = "bottom", inset = 0.05), 
+  xlab = "number of repetitions", 
+  ylab = "response time (ms)", 
+  ylim = c(600, 900), 
+  las = 1
+)
+
+```
+
+#### Jamais vu hypothesis
+
+```{r sensations informations, include = FALSE}
+
+# count number of participants who reported at least one sensation
+df_infos %>% 
+  count(présence_jv)
+
+# count the total number of JV
+df_infos %>% 
+  summarise(sum(as.numeric(nombre_jv)))
+
+# count the number of JV per condition
+df %>%
+  group_by(number_presentation) %>%
+  count(jamais_vu == 1)
+
+
+# count percentage of options chosen
+df_infos %>% 
+  filter(présence_jv==1) %>% 
+  count(
+    mot_pas_réel
+  )
+
+df_infos %>% 
+  filter(présence_jv==1) %>% 
+  count(
+    ortho_incorrect
+  )
+
+df_infos %>% 
+  filter(présence_jv==1) %>% 
+  count(
+    première_fois
+  )
+
+df_infos %>% 
+  filter(présence_jv==1) %>% 
+  count(
+    perte_de_sens
+  )
+
+# count of the average of sensations per participants
+M_JV = df_infos %>% 
+  filter(présence_jv == 1) %>% 
+  summarise(
+    mean(as.numeric(nombre_jv))
+  )
+
+SD_JV = df_infos %>% 
+  filter(présence_jv == 1) %>% 
+  summarise(
+    sd(as.numeric(nombre_jv))
+  )
+
+```
+
+This sub-section will begin with the classification of jamais vu reports.
+Any peculiar sensation was reported during the task and described in the end of the experiment.
+Based on the experiment of @Moulin2020, participants were asked to classify their feelings under several choices.
+Among the five possibilities, the percentage of choices was the following: "the word did not appear real" (55.1%), "the spelling looked incorrect" (22.4%), "it was as if I was seeing the word for the first time" (10.2%), "the word seemed to have lost its meaning" (93.9%), and "another" (7.3%).
+On the sample of 72 participants, `r sum(df_infos$présence_jv==1)` of them (68.05%) felt at least one sensation that can be characterized as jamais vu.
+There were a total of `r sum(df$jamais_vu==1)` reports of jamais vu (i.e., 17.57% of all observations), all in the 30-repetitions condition.
+Among those who felt at least one sensation, the average number of jamais vu was 10.3 (*SD* = 5.7).
+There was no correlation between the number of jamais vu felt in the experiment and the frequency of jamais vu in daily life, as well as between the frequency of jamais vu in daily life and other feelings such as déjà vu or ToT.
+
+```{r model JV, include = FALSE}
+# model comparison
+#lmjv_0 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv * Csem_rel | pp) + (Cjv * Csem_rel | target), data = df_JV)
+#lmjv_00 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv * Csem_rel || pp) + (Cjv * Csem_rel || target), data = df_JV)
+#lmjv_01 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv + Csem_rel || pp) + (Cjv * Csem_rel || target), data = df_JV)
+#lmjv_02 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv + Csem_rel || pp) + (Cjv + Csem_rel || target), data = df_JV)
+#lmjv_03 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv || pp) + (Cjv + Csem_rel || target), data = df_JV)
+#lmjv_04 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv + Csem_rel || pp) + (Cjv || target), data = df_JV)
+#lmjv_05 <- lmer(logRT ~ (Cjv * Csem_rel) + (Csem_rel || pp) + (Cjv + Csem_rel || target), data = df_JV)
+#lmjv_06 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv + Csem_rel || pp) + (Csem_rel || target), data = df_JV)
+#anova(lmjv_02, lmjv_06)
+#lmjv_1 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv | pp) + (Csem_rel || target), data = df_JV)
+#lmjv_2 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv | pp) + (Csem_rel | target), data = df_JV)
+
+
+# final model
+lm_JV <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv | pp) + (Csem_rel | target), data = df_JV)
+
+
+# check assumptions
+check_model(lm_JV)
+shapiro.test(residuals(lm_JV))
+
+# results
+summary(lm_JV)
+#Fixed effects:
+#              Estimate Std. Error        df t value Pr(>|t|)    
+#(Intercept)    6.61545    0.04087  50.28224 161.870  < 2e-16 ***
+#Cjv            0.06278    0.02191  44.89435   2.865  0.00633 ** 
+#Csem_rel       0.05510    0.02360  38.28925   2.335  0.02490 *  
+#Cjv:Csem_rel   0.06222    0.03084 727.94750   2.018  0.04400 *  
+
+#--------------------------------------------------------------------------------------------------
+
+# effect sizes (estimate / sqrt(sum all variances of random effects))
+# presence jamais vu
+ 0.06278 / sqrt(0.075622 + 0.004396 + 0.002552 + 0.013334 + 0.043825)
+# .17
+
+# semantic relation
+0.05510 /  sqrt(0.075622 + 0.004396 + 0.002552 + 0.013334 + 0.043825)
+# .15
+
+# interaction
+0.06222 / sqrt(0.075622 + 0.004396 + 0.002552 + 0.013334 + 0.043825)
+# .17
+
+```
+
+
+In order to test the jamais vu hypothesis, we focused on response times in the 30 repetitions condition (i.e., the satiation condition), as well as on participants who experienced at least one sensation of jamais vu.
+We used a mixed model analysis with the interaction between the presence of a jamais vu in a trial and the semantic relatedness as fixed effects.
+Using the method of [@Bates2015], we estimated as random effects an intercept and a slope for the variable presence of jamais vu per participants and for the variable semantic relatedness per stimuli.
+Average response times and standard deviations are shown in Table 2 and Figure 2.
+The analysis revealed a main effect of the presence of jamais vu (*t*(44.89) = 2.87, *p* \< .01, *d* = .17), indicating that response times are slower when a sensation of jamais vu occurs rather than not.
+The priming effect was still significant (*t*(38.29) = 2.33, *p* \< .05, *d* = .15), showing that semantic targets are recognized faster than the unrelated ones.
+The interaction effect was significant (*t*(727.95) = 2.02, *p* \< .05, *d* = .17) revealing that response times tend to increase when a sensation occurs only for unrelated targets.
+
+Two main points are visible from this analysis.
+Firstly, the presence of a sensation tend to generate a slow down state, but
+
+```{r table-2, fig.cap="\\label{tab:table-3}table-2", echo = FALSE, results = 'asis'}
+
+df_JV_abs <- df_average_JV %>% 
+  filter(jamais_vu == "absence") %>% 
+  spread(semantic_relation, response_time) %>% 
+  ungroup() %>% 
+  select("related", "unrelated")
+
+df_JV_pres <- df_average_JV %>% 
+  filter(jamais_vu == "presence") %>% 
+  spread(semantic_relation, response_time) %>% 
+  ungroup() %>% 
+  select("related", "unrelated")
+
+M_JV_abs <- t(apply(df_JV_abs, 2, function(x) {
+    round(c(Mean = mean(x, na.rm = TRUE), SD = sd(x, na.rm = TRUE), Min = min(x, na.rm = TRUE), Max = max(x, na.rm = TRUE)), 2)
+  }))
+  
+M_JV_pres <- t(apply(df_JV_pres, 2, function(x) {
+    round(c(Mean = mean(x, na.rm = TRUE), SD = sd(x, na.rm = TRUE), Min = min(x, na.rm = TRUE), Max = max(x, na.rm = TRUE)), 2)
+  }))
+
+apa_table(cbind(M_JV_abs, M_JV_pres),
+          placement = "ht", 
+          align = c("l", rep("l", 8)),          
+          caption = "response times as a function of the presence of jamais vu and the semantic relatedness",
+          note = "All values are in milliseconds.",
+          added_stub_head = 'semantic relatedness', 
+          col_spanners = list(`jamais vu absence` = c(2, 5), `jamais vu presence` = c(6, 9)))
+
+```
+
+```{r figure-2, fig.cap="\\label{fig:figure-2}response times and standard errors as a function of the presence of jamais vu and the semantic relatedness", echo = FALSE, results = 'asis'}
+
+par(
+  list(
+    family = "serif", 
+    adj = 0.5, 
+    cex.main = 1, 
+    cex.axis = 1, 
+    cex.lab = 1
+  ), 
+  no.readonly = FALSE
+)
+
+apa_lineplot(
+  df_JV, 
+  id = "pp", 
+  dv = "response_time", 
+  factors = c('jamais_vu', 'semantic_relation'), 
+  dispersion = se, 
+  jit = 0.1, 
+  args_legend = list(x = "bottom", inset = 0.05), 
+  xlab = "jamais vu", 
+  ylab = "response time (ms)", 
+  ylim = c(600, 1000), 
+  las = 1
+)
+
+```
+
+```{r table 3, fig.cap="\\label{tab:table-1}table-3", echo = FALSE, results = 'asis'}
+
+df_3_w <- df_average_SS_w %>% 
+  filter(number_presentation == "3") %>% 
+  spread(semantic_relation, response_time) %>% 
+  ungroup() %>% 
+  select("related", "unrelated")
+  
+df_30_w <- df_average_SS_w %>% 
+  filter(number_presentation == "30") %>% 
+  spread(semantic_relation, response_time) %>% 
+  ungroup() %>% 
+  select("related", "unrelated")
+
+
+M3_w <- t(apply(df_3_w, 2, function(x) {
+    round(c(Mean = mean(x, na.rm = TRUE), SD = sd(x, na.rm = TRUE), Min = min(x, na.rm = TRUE), Max = max(x, na.rm = TRUE)), 2)
+  }))
+
+M30_w <- t(apply(df_30_w, 2, function(x) {
+    round(c(Mean = mean(x, na.rm = TRUE), SD = sd(x, na.rm = TRUE), Min = min(x, na.rm = TRUE), Max = max(x, na.rm = TRUE)), 2)
+  }))
+
+
+apa_table(cbind(M3_w, M30_w),
+          placement = "ht", 
+          align = c("l", rep("l", 8)),          
+          caption = "response times as a function of the number of repetitions and the semantic relatedness",
+          note = "All values are in milliseconds.",
+          added_stub_head = 'semantic relatedness', 
+          col_spanners = list(`3` = c(2, 5), `30` = c(6, 9)))
+
+```
+
+
+
+# Experiment 2
+
+#### Semantic satiation hypothesis
+
+```{r restructure SSr, include = FALSE}
+
+dfr_SS <- dfr %>% 
+  transform(
+    semantic_relation = ifelse(semantic_relation == "r", "related", "unrelated"), 
+    number_presentation = ifelse(number_presentation == 3, "3", "30"), 
+    response_keyboard_response_JV = ifelse(response_keyboard_response_JV == "p", "presence", "absence")
+  ) %>% 
+  rename(
+    jamais_vu = response_keyboard_response_JV
+  ) %>% 
+  mutate(
+    logRT = log(response_time),
+    correct = ifelse(response_keyboard_response == correct_response, 1, 0), 
+    invRT = 1000 / response_time
+  ) %>% 
+  mutate(
+    Cnum_pres = -0.5*(number_presentation == 3) + 0.5*(number_presentation == 30), 
+    Csem_rel = -0.5*(semantic_relation == "related") + 0.5*(semantic_relation == "unrelated")
+  ) %>% 
+  filter(
+    correct == 1
+  ) %>% 
+  group_by(pp) %>% 
+  mutate(
+    med = median(response_time), 
+    mad = mad(response_time, center = median(response_time), constant = 1.4826, na.rm = FALSE,
+              low = FALSE, high = FALSE),
+    mad3 = med + (3*mad), 
+    madinv = med - (3*mad)
+  ) %>% 
+  filter(
+    response_time < mad3, 
+    response_time > madinv, 
+    response_time > 200
+  ) %>% 
+  mutate(`semantic relatedness` = semantic_relation)
+
+```
+
+```{r model SSr, include = FALSE}
+
+# model comparison
+#lmssr_0 <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres*Csem_rel | pp) + (Cnum_pres*Csem_rel | target), data = dfr_SS)
+#lmssr_00 <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres*Csem_rel || pp) + (Cnum_pres*Csem_rel || target), data = dfr_SS)
+#lmssr_01 <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres + Csem_rel || pp) + (Cnum_pres*Csem_rel || target), data = dfr_SS)
+#lmssr_02 <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres + Csem_rel || pp) + (Cnum_pres + Csem_rel || target), data = dfr_SS)
+#lmssr_03 <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres || pp) + (Cnum_pres + Csem_rel || target), data = dfr_SS)
+#lmssr_04 <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Csem_rel || pp) + (Cnum_pres + Csem_rel || target), data = dfr_SS)
+#lmssr_05 <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres + Csem_rel || pp) + (Cnum_pres || target), data = dfr_SS)
+#lmssr_06 <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres + Csem_rel || pp) + (Csem_rel || target), data = dfr_SS)
+#lmssr_07 <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres + Csem_rel || pp) + (0 + Csem_rel || target), data = dfr_SS)
+#anova(lmssr_06, lmssr_07)
+#lmssr_1 <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres + Csem_rel | pp) + (0 + Csem_rel || target), data = dfr_SS)
+#lmssr_2 <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres + Csem_rel | pp) + (0 + Csem_rel | target), data = dfr_SS)
+
+
+# final model 
+lm_SSr <- lmer(logRT ~ (Cnum_pres*Csem_rel) + (Cnum_pres + Csem_rel | pp) + (0 + Csem_rel | target), data = dfr_SS)
+
+
+# check assumptions
+check_model(lm_SSr)
+shapiro.test(residuals(lm_SSr))
+
+
+# results
+summary(lm_SSr)
+#Fixed effects:
+#                     Estimate Std. Error         df t value Pr(>|t|)    
+#(Intercept)           6.88099    0.05094   70.93448 135.078  < 2e-16 ***
+#Cnum_pres             0.12575    0.02135   72.13091   5.889 1.14e-07 ***
+#Csem_rel              0.03575    0.02188   51.29499   1.634    0.108    
+#Cnum_pres:Csem_rel   -0.03016    0.02766 2328.75276  -1.090    0.276   
+
+#--------------------------------------------------------------------------------------------------
+
+# effect sizes (estimate / sqrt(sum all variances of random effects))
+# number repetitions
+ 0.12575 / sqrt(0.183324 + 0.018977 + 0.010683 + 0.005515 + 0.120887)
+# .22
+
+# semantic relation
+0.03575 /  sqrt(0.183324 + 0.018977 + 0.010683 + 0.005515 + 0.120887)
+# .06
+
+# interaction
+0.03016 / sqrt(0.183324 + 0.018977 + 0.010683 + 0.005515 + 0.120887)
+# .05
+
+#--------------------------------------------------------------------------------------------------
+ 
+# Bayesian
+str(dfr_SS)
+dfr_SS$pp <- as.factor(dfr_SS$pp)
+dfr_SS$target <- as.factor(dfr_SS$target)
+dfr_SS$Cnum_pres <- as.factor(dfr_SS$Cnum_pres)
+dfr_SS$Csem_rel <- as.factor(dfr_SS$Csem_rel)
+
+BFrsem <- anovaBF(logRT ~ Cnum_pres : Csem_rel + pp, whichRandom = "pp", data = dfr_SS, 
+                 iterations = 10000, whichModels = "top")
+BFrsem   
+
+# because the output of the model is H0, we have to search the inverse of the parameter's result
+1/BFrsem[3] # number of repetitions : 6.023451e+15 ±5.85%
+1/BFrsem[2] # semantic relation :  1.125464 ±4.53%
+1/BFrsem[1] # interaction : 0.1130244 ±4.99%
+
+```
+
+```{r figure-3, fig.cap="\\label{fig:figure-1}Reaction times and standard errors as a function of the number of repetitions and the semantic relatedness", echo = FALSE, results = 'asis'}
+
+par(
+  list(
+    family = "serif", 
+    adj = 0.5, 
+    cex.main = 1, 
+    cex.axis = 1, 
+    cex.lab = 1
+  ), 
+  no.readonly = FALSE
+)
+
+apa_lineplot(
+  dfr_SS, 
+  id = "pp", 
+  dv = "response_time", 
+  factors = c("number_presentation", 'semantic_relation'), 
+  dispersion = se, 
+  jit = 0.1, 
+  args_legend = list(x = "bottom", inset = 0.05), 
+  xlab = "number of repetitions", 
+  ylab = "response time (ms)", 
+  ylim = c(900, 1400), 
+  las = 1
+)
+
+```
+
+#### Jamais vu hypothesis
+
+```{r restructure JVr, include = FALSE}
+
+dfr_JV <- dfr_SS %>%  
+  filter(number_presentation == 30, 
+         jv_pp == 1) %>% 
+  select(pp, Csem_rel, jamais_vu, invRT, logRT, target, response_time, semantic_relation) %>% 
+  mutate(Cjv = ifelse(jamais_vu == "absence", -0.5, 0.5))
+
+dfr_average_JV <- dfr_JV %>% 
+  group_by(pp, jamais_vu, semantic_relation) %>% 
+  summarise(response_time = mean(response_time))
+
+```
+
+```{r model JVr, include = FALSE}
+
+# model comparison
+#lmjvr_0 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv * Csem_rel | pp) + (Cjv * Csem_rel | target), data = dfr_JV)
+#lmjvr_00 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv * Csem_rel || pp) + (Cjv * Csem_rel || target), data = dfr_JV)
+#lmjvr_01 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv + Csem_rel || pp) + (Cjv * Csem_rel || target), data = dfr_JV)
+#lmjvr_02 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv + Csem_rel || pp) + (Cjv + Csem_rel || target), data = dfr_JV)
+#lmjvr_03 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv || pp) + (Cjv + Csem_rel || target), data = dfr_JV)
+#lmjvr_04 <- lmer(logRT ~ (Cjv * Csem_rel) + (Csem_rel || pp) + (Cjv + Csem_rel || target), data = dfr_JV)
+#lmjvr_05 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv + Csem_rel || pp) + (Cjv || target), data = dfr_JV)
+#lmjvr_06 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv + Csem_rel || pp) + (Csem_rel || target), data = dfr_JV)
+#lmjvr_07 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv + Csem_rel || pp) + (0 + Csem_rel || target), data = dfr_JV)
+#anova(lmjvr_06, lmjvr_07)
+#lmjvr_1 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv + Csem_rel | pp) + (0 + Csem_rel || target), data = dfr_JV)
+#lmjvr_2 <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv + Csem_rel | pp) + (0 + Csem_rel | target), data = dfr_JV)
+
+
+# final model 
+lm_JVr <- lmer(logRT ~ (Cjv * Csem_rel) + (Cjv + Csem_rel | pp) + (0 + Csem_rel | target), data = dfr_JV)
+
+
+# check assumptions
+check_model(lm_JVr)
+shapiro.test(residuals(lm_JVr))
+
+
+# results
+summary(lm_JVr)
+#Fixed effects:
+#              Estimate Std. Error        df t value Pr(>|t|)    
+#(Intercept)    6.99632    0.05773  57.91821 121.186   <2e-16 ***
+#Cjv           -0.04928    0.03315  52.58022  -1.487   0.1430    
+#Csem_rel       0.05193    0.03421  42.03908   1.518   0.1365    
+#Cjv:Csem_rel  -0.13211    0.05013 700.78860  -2.635   0.0086 ** 
+
+#--------------------------------------------------------------------------------------------------
+
+# effect sizes (estimate / sqrt(sum all variances of random effects))
+# presence jamais vu
+ 0.04928 / sqrt(0.18704 + 0.01828 + 0.01556 + 0.01373 + 0.12538)
+# .08
+
+# semantic relation
+0.05193 /  sqrt(0.18704 + 0.01828 + 0.01556 + 0.01373 + 0.12538)
+# .09
+
+# interaction
+0.13211 / sqrt(0.18704 + 0.01828 + 0.01556 + 0.01373 + 0.12538)
+# .22
+
+
+```
+
+```{r figure-4, fig.cap="\\label{fig:figure-2}Reaction times and standard errors as a function of the presence of jamais vu and the semantic relatedness", echo = FALSE, results = 'asis'}
+
+par(
+  list(
+    family = "serif", 
+    adj = 0.5, 
+    cex.main = 1, 
+    cex.axis = 1, 
+    cex.lab = 1
+  ), 
+  no.readonly = FALSE
+)
+
+apa_lineplot(
+  dfr_JV, 
+  id = "pp", 
+  dv = "response_time", 
+  factors = c('jamais_vu', 'semantic_relation'), 
+  dispersion = se, 
+  jit = 0.1, 
+  args_legend = list(x = "bottom", inset = 0.05), 
+  xlab = "jamais vu", 
+  ylab = "response time (ms)", 
+  ylim = c(1000, 1600), 
+  las = 1
+)
+
+```
+
+\newpage
+
+# References
+
+```{r create_r-references}
+r_refs(file = "r-references.bib")
+```
+
+```{=tex}
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+```
+::: {#refs custom-style="Bibliography"}
+:::
+
+\endgroup
